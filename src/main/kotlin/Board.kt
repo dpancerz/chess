@@ -1,7 +1,7 @@
 package com.dpancerz.chess
 
 abstract class Board(private val size: Int) {
-    private val squares = HashMap<String, Square>()
+    protected val squares = HashMap<String, Square>()
     protected val pieces = HashSet<PieceOnBoard>()
     init {
         for (c in 1..size) {
@@ -19,6 +19,14 @@ abstract class Board(private val size: Int) {
         }
         return squares.getOrElse(col.toString() + row.toString())
                 { Square(this,'#', -1) }
+    }
+
+    fun addPieceOn(square: Square, piece: Piece) {
+        pieces.add(PieceOnBoard(piece, square))
+    }
+
+    fun clear() {
+        squares.forEach { it.value.clearHeldPiece() }
     }
 
     private fun outsideBounds(col: Char, row: Int) = row > size || toNumber(col) > size

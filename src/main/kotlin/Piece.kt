@@ -16,8 +16,13 @@ interface Piece {
         return this.color != another.color
     }
 
+    fun hasColor(): Boolean {
+        return Piece.Color.NOT_AVAILABLE != this.color
+    }
+
     enum class Color {
         BLACK,
-        WHITE
+        WHITE,
+        NOT_AVAILABLE
     }
 }

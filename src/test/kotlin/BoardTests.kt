@@ -1,9 +1,11 @@
 package com.dpancerz.chess
 
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class BoardTests {
     private val chessboard = ChessBoard()
+
     @Test
     fun shouldCalculateColorsCorrectly() {
         val A1 = chessboard.square('A', 1)
@@ -11,11 +13,11 @@ class BoardTests {
         val B2 = chessboard.square('B', 2)
         val E4 = chessboard.square('E', 4)
 
-        assert(A1.color == Square.Color.BLACK)
-        assert(A2.color == Square.Color.WHITE)
-        assert(B2.color == Square.Color.BLACK)
-        assert(E4.color == Square.Color.WHITE)
+        assertEquals(A1.color, Square.Color.BLACK)
+        assertEquals(A2.color, Square.Color.WHITE)
+        assertEquals(B2.color, Square.Color.BLACK)
+        assertEquals(E4.color, Square.Color.WHITE)
     }
 
-    @Test fun shouldConvertSixtyFiveToUpperCaseA() = assert('A' == 65.toChar())
+    @Test fun shouldConvertSixtyFiveToUpperCaseA() = assertEquals('A', 65.toChar())
 }

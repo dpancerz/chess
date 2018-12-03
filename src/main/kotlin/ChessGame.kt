@@ -1,25 +1,39 @@
 package com.dpancerz.chess
 
-class ChessGame(val board: ChessBoard = ChessBoard(),
-                val translator: Translator = Translator(),
-                val moveParser: MoveParser = MoveParser()) {
+class ChessGame(
+    private val board: ChessBoard = ChessBoard(),
+    private val translator: ChessTranslator = ChessTranslator(),
+    positionSetter: ChessPositionSetter = ChessPositionSetter(board, translator)
+) {
+    private var toMove: Piece.Color = Piece.Color.WHITE //TODO use and toggle
 
-    private var toMove: AbstractPiece.Color = AbstractPiece.Color.WHITE
     init {
-        board.startingPosition
+        positionSetter.initializeBoard()
     }
 
-/*    fun move(move: String) {
-        extractPiece(move)
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun move(move: String): ExecutedMove {
+        val moveDto = translator.parseMove(move)
+        val pieceOnBoard = findPieceOnBoard(moveDto)
+        val target = moveDto.target
+        return move(pieceOnBoard, board.square(target.column, target.row))
     }
 
-    private fun extractPiece(move: String) {
-        move
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private fun findPieceOnBoard(moveDto: MoveData): PieceOnBoard {
+        val source = moveDto.source
+        if (source != null) {
+            return board.piece(moveDto.piece, source.column, source.row)
+        }
+        val target = moveDto.target
+        val square = board.square(target.column, target.row)
+        val canReach = board.getPiecesThatCanReach(square, moveDto.piece)
+        try {
+            return canReach.first()
+        } catch (e: Exception) {
+            throw Exception("no piece \'${moveDto.piece}\' found that could reach ${moveDto.target}")
+        }
     }
-*/
-    fun move(piece: ChessPiece, target: Square) {
-        Move(piece, target).execute()
+
+    fun move(piece: PieceOnBoard, target: Square): ExecutedMove {
+        return Move(piece, target).execute()
     }
 }

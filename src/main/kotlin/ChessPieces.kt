@@ -6,7 +6,7 @@ abstract class ChessPiece(color: Piece.Color, private val type: ChessPieceType) 
     }
 }
 
-class King(color: Piece.Color) : ChessPiece(color, ChessPieceType.KING) {
+data class King(override var color: Piece.Color) : ChessPiece(color, ChessPieceType.KING) {
     private val moves: Set<PossibleMove> = setOf<PossibleMove>()
         .plus(diagonally(this, 1))
         .plus(alongTheLines(this, 1))
@@ -26,7 +26,7 @@ abstract class CapturablePiece(pieceType: ChessPieceType, color: Piece.Color) : 
     }
 }
 
-class Queen(color: Piece.Color) : CapturablePiece(ChessPieceType.QUEEN, color) {
+data class Queen(override var color: Piece.Color) : CapturablePiece(ChessPieceType.QUEEN, color) {
     private val moves: Set<PossibleMove>
 
     init {
@@ -43,7 +43,7 @@ class Queen(color: Piece.Color) : CapturablePiece(ChessPieceType.QUEEN, color) {
     }
 }
 
-class Rook(color: Piece.Color) : CapturablePiece(ChessPieceType.ROOK, color) {
+data class Rook(override var color: Piece.Color) : CapturablePiece(ChessPieceType.ROOK, color) {
     private val moves: Set<PossibleMove>
 
     init {
@@ -59,7 +59,7 @@ class Rook(color: Piece.Color) : CapturablePiece(ChessPieceType.ROOK, color) {
     }
 }
 
-class Bishop(color: Piece.Color) : CapturablePiece(ChessPieceType.BISHOP, color) {
+data class Bishop(override var color: Piece.Color) : CapturablePiece(ChessPieceType.BISHOP, color) {
     private val moves: Set<PossibleMove>
 
     init {
@@ -75,7 +75,7 @@ class Bishop(color: Piece.Color) : CapturablePiece(ChessPieceType.BISHOP, color)
     }
 }
 
-class Knight(color: Piece.Color) : CapturablePiece(ChessPieceType.KNIGHT, color) {
+data class Knight(override var color: Piece.Color) : CapturablePiece(ChessPieceType.KNIGHT, color) {
     private val moves: Set<PossibleMove> = setOf(
         PossibleMove(this, 1, 2),
         PossibleMove(this, -1, 2),
@@ -92,14 +92,20 @@ class Knight(color: Piece.Color) : CapturablePiece(ChessPieceType.KNIGHT, color)
     }
 }
 
-class Pawn(color: Piece.Color) : CapturablePiece(ChessPieceType.PAWN, color) {
-    private val vertically = if (color == Piece.Color.WHITE) 1 else -1
+data class Pawn(override var color: Piece.Color) : CapturablePiece(ChessPieceType.PAWN, color) {
+    val isWhite = color == Piece.Color.WHITE
+    private val vertically = if (isWhite) 1 else -1
+    private val startingRow = if (isWhite) 2 else 7
+    private val enPassantRow = if (isWhite) 5 else 4
     private val moves: Set<PossibleMove> = setOf(
-        PossibleMove(this, 0, vertically)
+        PossibleMove(this, 0, vertically),
+        PossibleMove(this, 0, 2 * vertically, startingRow)//starting move
     )
     private val captures: Set<PossibleMove> = setOf(
         PossibleMove(this, 1, vertically),
-        PossibleMove(this, -1, vertically)
+        PossibleMove(this, -1, vertically),
+        PossibleMove(this, 1, vertically, enPassantRow, null), //TODO correct en passant
+        PossibleMove(this, -1, vertically, enPassantRow, null) //TODO
     )
 
     override fun possiblyLegalMoves(): Set<PossibleMove> {
