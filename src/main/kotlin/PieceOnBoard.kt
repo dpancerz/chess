@@ -44,8 +44,13 @@ class PieceOnBoard(val piece: Piece, var standingOn: Square) : Piece by piece {
     }
 
     private fun matches(target: Square, allowed: PossibleMove): Boolean {
-        val targetMatches = target == this.standingOn
-            .plus(allowed.horizontally, allowed.vertically)
+        var targetMatches: Boolean
+        try {
+            targetMatches = target == this.standingOn
+                .plus(allowed.horizontally, allowed.vertically)
+        } catch (e: Board.SquareOutsideBoundsException) {
+            return false
+        }
         val isRowRestricted = allowed.onlyFromRow != null
         val rowsMatch = allowed.onlyFromRow == this.standingOn.row
         return targetMatches && (isRowRestricted.not()
@@ -58,5 +63,9 @@ class PieceOnBoard(val piece: Piece, var standingOn: Square) : Piece by piece {
         if (other !is PieceOnBoard) return false
         return this.piece == other.piece
                 && this.standingOn == other.standingOn
+    }
+
+    override fun toString(): String {
+        return "PieceOnBoard($piece, $standingOn, captured=$captured, removed=$removed)"
     }
 }

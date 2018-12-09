@@ -31,10 +31,10 @@ class ChessPositionSetter(
             .split("|")
             .drop(1)
             .take(8)
-            .mapIndexed { i, piece -> PieceOnBoardData(rowData.rowNumber, column(i), piece) }
+            .mapIndexed { i, piece -> PieceOnBoardData(rowData.rowNumber,
+                board.toColumn(i),
+                piece) }
     }
-
-    private fun column(i: Int) = ('A'.toInt() + i).toChar()
 
     companion object {
         val startingPosition = """

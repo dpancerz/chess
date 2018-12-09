@@ -6,7 +6,7 @@ class Move(val piece: PieceOnBoard, var target: Square) {
             piece.moveTo(target)
             return ExecutedMove(piece, piece.standingOn, piece.getBoard().getStateAfter(this))
         }
-        throw Exception()
+        throw Exception("can't execute move $piece -> $target")
     }
 
     private fun isLegal(): Boolean {
@@ -19,4 +19,9 @@ class Move(val piece: PieceOnBoard, var target: Square) {
 
     private fun canCapture() = piece.isCapturingMovementLegal(this)
             && target.hasPieceCapturableBy(this.piece)
+
+    override fun toString(): String {
+        return "Move(piece=${piece.piece.type()}, target=$target)"
+    }
+
 }

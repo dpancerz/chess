@@ -1,10 +1,14 @@
 package com.dpancerz.chess
 
+import java.lang.RuntimeException
+
 abstract class Board(private val size: Int) {
     protected val squares = HashMap<String, Square>()
     protected val pieces = HashSet<PieceOnBoard>()
+    internal val firstColumnAsInt = 'A'.toInt()
+
     init {
-        for (c in 1..size) {
+        for (c in 0 until size) {
             for (r in 1..size) {
                 val col = toColumn(c)
                 val key = col.toString() + r.toString()
@@ -14,31 +18,42 @@ abstract class Board(private val size: Int) {
     }
 
     fun square(col: Char, row: Int): Square {
-        if (outsideBounds(col, row)) {
-            throw Exception("wrong 'square()' input")
+        val safeCol = col.toUpperCase()
+        if (outsideBounds(safeCol, row)) {
+            throw SquareOutsideBoundsException("wrong 'square()' input- '$col$row'")
         }
-        return squares.getOrElse(col.toString() + row.toString())
-                { Square(this,'#', -1) }
+        val squareId = safeCol.toString() + row.toString()
+        return squares.getOrElse(squareId)
+                { throw Exception("can't find square '$squareId'") }
     }
 
     fun addPieceOn(square: Square, piece: Piece) {
         pieces.add(PieceOnBoard(piece, square))
+        square.setPiece(piece)
     }
 
     fun clear() {
         squares.forEach { it.value.clearHeldPiece() }
     }
 
-    private fun outsideBounds(col: Char, row: Int) = row > size || toNumber(col) > size
-
-    internal fun toNumber(col: Char): Int {
-        return col.toUpperCase().toInt() + 1 - 'A'.toInt()
+    private fun outsideBounds(col: Char, row: Int): Boolean {
+        val colAsNumber = toNumber(col)
+        return row > size
+                || row < 1
+                || colAsNumber > size
+                || colAsNumber < 1
     }
 
-    private fun toColumn(col: Int): Char {
-        return (col + 64).toChar()
+    internal fun toNumber(col: Char): Int {
+        return col.toInt() + 1 - firstColumnAsInt
+    }
+
+    internal fun toColumn(col: Int): Char {
+        return (col + firstColumnAsInt).toChar()
     }
 
     abstract fun isLegal(move: Move): Boolean
     abstract fun getStateAfter(move: Move): MoveType
+
+    class SquareOutsideBoundsException(s: String) : RuntimeException(s)
 }

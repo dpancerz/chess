@@ -13,13 +13,7 @@ class ChessBoard : Board(8) {
 
     override fun isLegal(move: Move): Boolean { //TODO
         val color = move.piece.color
-        return isChecked(color) // wouldBeCheckedAfterMove
-    }
-
-    fun isChecked(color: Piece.Color): Boolean {
-        return getPieces("K")
-            .filter { it -> it.color == color }
-            .any { it -> isAttacked(it) }
+        return !isCheckedKingOf(color) // wouldBeCheckedAfterMove
     }
 
     fun piece(piece: Piece, column: Char, row: Int): PieceOnBoard {
@@ -34,6 +28,12 @@ class ChessBoard : Board(8) {
 
     private fun isAttacked(piece: PieceOnBoard): Boolean { //TODO
         return false
+    }
+
+    private fun isCheckedKingOf(color: Piece.Color): Boolean {
+        return getPieces("K")
+            .filter { it -> it.color == color }
+            .any { it -> isAttacked(it) }
     }
 
     override fun equals(other: Any?): Boolean {

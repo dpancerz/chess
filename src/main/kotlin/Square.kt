@@ -59,4 +59,9 @@ data class Square(
         return this.col == other.col
                 && this.row == other.row
     }
+
+    override fun toString(): String {
+        return "Square('$col$row', piece=${heldPiece?.piece})"
+    }
+
 }

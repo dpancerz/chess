@@ -1,8 +1,12 @@
 package com.dpancerz.chess
 
-abstract class ChessPiece(color: Piece.Color, private val type: ChessPieceType) : AbstractPiece(color) {
+abstract class ChessPiece(override var color: Piece.Color, private val type: ChessPieceType) : AbstractPiece(color) {
     override fun type(): String {
         return type.acronym
+    }
+
+    override fun toString(): String {
+        return "ChessPiece(type=$type, color=$color)"
     }
 }
 
